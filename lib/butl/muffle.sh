@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 # Only outputs stderr if command fails
-# @param command: command to run
-# @param args...: arguments to pass to the command
+# @param command:  command to run
+# @param args...:  arguments to pass to the command
 butl.muffle() {
     local err=0
     local stderr
@@ -38,13 +38,15 @@ butl.muffle() {
     return "$err"
 }
 
-# Only output to stdout if VERBOSE is set
+# Only output to stdout if LOG_LEVEL >= 1
 # Only output to stderr if command fails
-# @param command: command to run
-# @param args...: argumets to pass to the command
+# @param command:  command to run
+# @param args...:  argumets to pass to the command
 butl.silence() {
-    # TODO: Add log level to check
-    if ((${VERBOSE:-})); then
+    : "${LOG_LEVEL:=6}"
+    : "${VERBOSE:=0}"
+
+    if ((LOG_LEVEL >= 7 || VERBOSE)); then
         butl.muffle "$@"
     else
         butl.muffle "$@" >/dev/null

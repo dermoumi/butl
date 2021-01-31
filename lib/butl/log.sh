@@ -30,7 +30,7 @@ __butl.init_log_vars
 butl.echo_stylized() {
     local style=$1
     shift
-    printf '%b\n' "${style}${*//\\e[0m/$BUTL_ANSI_RESET$style}${BUTL_ANSI_RESET}"
+    printf '%b\n' "${style}${*//\\e\[0m/$BUTL_ANSI_RESET$style}${BUTL_ANSI_RESET}"
 }
 
 # Prints emergency message
