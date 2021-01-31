@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
 butl.strip_ansi_style() {
-    if shopt -qs extglob; then
-        local keep_extglob=1
+    local keep_extglob=0
+    if shopt -qp extglob; then
+        keep_extglob=1
     fi
 
     shopt -s extglob
@@ -14,8 +15,9 @@ butl.strip_ansi_style() {
 }
 
 butl.strip_ansi() {
-    if shopt -qs extglob; then
-        local keep_extglob=1
+    local keep_extglob=0
+    if shopt -qp extglob; then
+        keep_extglob=1
     fi
 
     shopt -s extglob

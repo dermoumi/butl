@@ -2,9 +2,10 @@
 
 # Formats tab separated stdin entries as columns
 butl.columns() {
-    local separator=${1:-  }
+    local out_separator=${1:-  }
+    local input_separator=${2:-$'\t'}
 
-    if column -o "$separator" -s $'\t' -t -L 2>/dev/null; then
+    if column -o "$out_separator" -s "$input_separator" -t -L 2>/dev/null; then
         return
     fi
 
@@ -32,7 +33,9 @@ butl.columns() {
 
     # generate a printf string such as it can print each cells at a given width
     local printf_query
-    printf_query=$(printf -- "$separator%%-%ss" "${column_widths[@]}")
+    printf_query=$(printf -- "$out_separator%%-%ss" "${column_widths[@]::$((${#column_widths[@]} - 1))}")
+    printf_query+="$out_separator%s"
+
     for line in "${lines[@]-}"; do
         if [[ ! "$line" ]]; then
             echo
@@ -42,8 +45,10 @@ butl.columns() {
         cells=()
         while IFS= read -r cell; do
             cells+=("$cell")
-        done <<<"${line//$'\t'/$'\n'}"
+        done <<<"${line//$input_separator/$'\n'}"
+
+        local out
         # shellcheck disable=SC2059
-        printf "${printf_query/$separator/}\n" "${cells[@]}"
+        printf "${printf_query#$out_separator}\n" "${cells[@]}"
     done
 }

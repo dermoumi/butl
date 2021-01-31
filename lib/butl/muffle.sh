@@ -5,9 +5,31 @@
 # @param args...: arguments to pass to the command
 butl.muffle() {
     local err=0
-    exec 3>&1
-    stderr=$("$@" 2>&1 1>&3) || err=$?
-    exec 3>&-
+    local stderr
+
+    if ((BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] >= 2 && BASH_VERSINFO[1] <= 3)); then
+        # Working around bash 4.2 and 4.3 not returning the correct exit code of subprocesses
+        local stderr_file
+        stderr_file=$(mktemp)
+
+        local stdout_file
+        stdout_file=$(mktemp)
+
+        err=$("${@}" 1>"$stdout_file" 2>"$stderr_file" || echo $?) || err=$?
+        if [[ ! "$err" ]]; then
+            err=0
+        fi
+
+        cat "$stdout_file"
+        rm "$stdout_file"
+
+        stderr=$(<"$stderr_file")
+        rm "$stderr_file"
+    else
+        exec 3>&1
+        stderr=$("$@" 2>&1 1>&3) || err=$?
+        exec 3>&-
+    fi
 
     if ((err)); then
         echo "$stderr" >&2
