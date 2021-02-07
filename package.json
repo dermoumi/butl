@@ -1,0 +1,11 @@
+{
+    "name": "butl",
+    "version": "0.0.1",
+    "description": "utility functions for bash scripts",
+    "scripts": [
+        "dist/lib/*"
+    ],
+    "files": [
+      "lib/*"
+    ]
+}

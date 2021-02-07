@@ -11,7 +11,7 @@ butl.is_declared() {
 # @param value:  Value of the variable
 butl.set_var() {
     # shellcheck disable=SC2059
-    printf -v "$1" "$2"
+    printf -v "$1" -- "$2"
 }
 
 # Check if value is false

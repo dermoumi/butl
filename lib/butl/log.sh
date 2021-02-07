@@ -15,7 +15,9 @@ __butl.init_log_vars() {
     : "${BUTL_STYLE_DEBUG:="${BUTL_ANSI_BRBLACK}"}"
 
     if [[ ! "${LOG_LEVEL:-}" ]]; then
-        if ((${VERBOSE:-})); then
+        if [[ "${LOGLEVEL:-}" ]]; then
+            export LOG_LEVEL=$LOGLEVEL
+        elif ((${VERBOSE:-})); then
             export LOG_LEVEL=7
         else
             export LOG_LEVEL=6
@@ -30,7 +32,7 @@ __butl.init_log_vars
 butl.echo_stylized() {
     local style=$1
     shift
-    printf '%b\n' "${style}${*//\\e\[0m/$BUTL_ANSI_RESET$style}${BUTL_ANSI_RESET}"
+    printf -- '%b\n' "${style}${*//\\e\[0m/$BUTL_ANSI_RESET$style}${BUTL_ANSI_RESET}"
 }
 
 # Prints emergency message

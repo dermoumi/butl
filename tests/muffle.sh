@@ -17,6 +17,20 @@ test_muffle_prints_to_stderr_if_command_fails() {
     assert_exits_with --code=42 --stderr="$stderr" --stdout="$stdout" butl.muffle bash -c "$command"
 }
 
+test_muffle_all_does_not_print_if_command_does_not_fail() {
+    local command="echo errors >&2; echo hello; echo more errors >&2;"
+
+    assert_exits_with --code=0 --stderr="" --stdout="" butl.muffle_all bash -c "$command"
+}
+
+test_muffle_all_prints_if_command_fails() {
+    local command="echo this is cheese; echo this is an error >&2; exit 42"
+    local stdout="this is cheese"
+    local stderr="this is an error"
+
+    assert_exits_with --code=42 --stderr="$stderr" --stdout="$stdout" butl.muffle_all bash -c "$command"
+}
+
 test_silence_does_not_print_anything_if_command_does_not_fail() {
     local command="echo errors >&2; echo hello; echo more errors >&2;"
 
