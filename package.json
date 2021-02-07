@@ -2,10 +2,13 @@
     "name": "butl",
     "version": "0.0.1",
     "description": "utility functions for bash scripts",
-    "scripts": [
-        "dist/lib/"
-    ],
     "files": [
-      "lib/"
+      "lib/butl/ansi.sh",
+      "lib/butl/arrays.sh",
+      "lib/butl/columns.sh",
+      "lib/butl/log.sh",
+      "lib/butl/muffle.sh",
+      "lib/butl/strip_ansi.sh",
+      "lib/butl/vars.sh"
     ]
 }
