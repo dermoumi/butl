@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# BGEN__SHEBANG_REMOVED
+
 # Check if the passed variable(s) is declared
 # @param variable_name:  Name of variable to check
 butl.is_declared() {
