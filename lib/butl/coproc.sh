@@ -7,6 +7,10 @@ butl.co_run() {
     local __butl_output_var=$1
     shift
 
+    if ((${BUTL_COPROC_DEBUG:-})); then
+        echo "Calling co_run with $# commands" >&2
+    fi
+
     local __butl_cmd
     local __butl_pid
     local __butl_pids=()
@@ -21,8 +25,16 @@ butl.co_run() {
         __butl_stdouts+=("$__butl_stdout")
         __butl_stderrs+=("$__butl_stderr")
 
-        (eval "$__butl_cmd" >"$__butl_stdout" 2>"$__butl_stderr") &
-        __butl_pids+=("$!")
+        if ((${BUTL_COPROC_DEBUG:-})); then
+            printf 'Running: ' >&2
+            printf '%q ' "$__butl_cmd" >&2
+            echo >&2
+            (eval -- "$__butl_cmd" >"$__butl_stdout" 2>"$__butl_stderr")
+            __butl_pids+=("-")
+        else
+            (eval -- "$__butl_cmd" >"$__butl_stdout" 2>"$__butl_stderr") &
+            __butl_pids+=("$!")
+        fi
     done
 
     local __butl_err=0
@@ -30,7 +42,9 @@ butl.co_run() {
 
     local __butl_output=()
     for __butl_pid in "${__butl_pids[@]}"; do
-        wait "$__butl_pid" || __butl_err=$?
+        if ! ((${BUTL_COPROC_DEBUG:-})); then
+            wait "$__butl_pid" || __butl_err=$?
+        fi
 
         __butl_stdout=${__butl_stdouts[$__butl_i]}
         __butl_stderr=${__butl_stderrs[$__butl_i]}
@@ -46,6 +60,9 @@ butl.co_run() {
         ((__butl_i = __butl_i + 1))
     done
 
-    butl.copy_array __butl_output "$__butl_output_var"
+    if [[ "$__butl_output_var" ]]; then
+        butl.copy_array __butl_output "$__butl_output_var"
+    fi
+
     return "$__butl_err"
 }
